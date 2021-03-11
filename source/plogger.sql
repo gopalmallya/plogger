@@ -20,24 +20,11 @@ is
     
     l_ajaxID                  varchar2(4000) := apex_plugin.get_ajax_identifier;
     
-    -- read plugin parameters and store in local variables
-/*    l_chunkSize                p_dynamic_action.attribute_01%type := p_dynamic_action.attribute_01;
-    l_threads                  p_dynamic_action.attribute_02%type := p_dynamic_action.attribute_02;
-    l_fileID                      p_dynamic_action.attribute_03%type := p_dynamic_action.attribute_03;
-    l_complete_callback_fn        p_dynamic_action.attribute_05%type := p_dynamic_action.attribute_05;
-    l_chunk_inserted_callback_fn  p_dynamic_action.attribute_06%type := p_dynamic_action.attribute_06;
-    l_error_callback_fn           p_dynamic_action.attribute_07%type := p_dynamic_action.attribute_07;
-    l_chunkFormat                 p_dynamic_action.attribute_11%type := p_dynamic_action.attribute_11; 
-    l_insertType                  p_dynamic_action.attribute_08%type := p_dynamic_action.attribute_08;
-    l_fileType                    p_dynamic_action.attribute_10%type := p_dynamic_action.attribute_10;
-    l_skipFirstNRows              p_dynamic_action.attribute_12%type := p_dynamic_action.attribute_12;
-    l_stream                      p_dynamic_action.attribute_13%type := p_dynamic_action.attribute_13;
-*/
     -- Javascript Initialization Code
     l_init_js_fn               varchar2(32767) := nvl(apex_plugin_util.replace_substitutions(p_dynamic_action.init_javascript_code), 'undefined');
     
 begin
-    -- standard debugging intro, but only if necessary
+
     if apex_application.g_debug
     then
         apex_plugin_util.debug_dynamic_action
@@ -46,7 +33,6 @@ begin
           );
     end if;
     
-    -- check if we need to add our toastr plugin library files
     apex_javascript.add_library 
       ( p_name           => apex_plugin_util.replace_substitutions('plogger.js')
       , p_directory      => p_plugin.file_prefix || 'js/'
@@ -61,49 +47,10 @@ begin
 
 
     -- create a JS function call passing all settings as a JSON object
-    --
-    -- csv2Table(this, {
-    --     "ajaxId": "SDtjkD9_TUyDJZzOzlRKnFkZWTFWkOqJrwNuJyUzooI",
-    --     "pageItems": {},
-    -- });
     apex_json.initialize_clob_output;
     apex_json.open_object;
-
     apex_json.write('ajaxId'             , l_ajaxID);
     apex_json.write('plugin_prefix'             , p_plugin.file_prefix || 'js/');
-    
-/*    apex_json.open_object('pageItems');
-    apex_json.write('chunkSize'      , l_chunkSize);
-    apex_json.write('threads'      , l_threads);
-    apex_json.write('skipFirstNRows'      , l_skipFirstNRows);
-    apex_json.write('fileType'      , l_fileType);
-    apex_json.write('fileID'      , l_fileID);
-    apex_json.write('chunkFormat'      , l_chunkFormat);
-    apex_json.write('insertType'      , l_insertType);
-    apex_json.write('stream'      , l_stream);
-    if l_complete_callback_fn is not null then
-      apex_json.write_raw
-            ( p_name  => 'complete_callback_fn'
-            , p_value => l_complete_callback_fn
-            );
-    end if;
-      
-    if l_chunk_inserted_callback_fn is not null then        
-      apex_json.write_raw
-            ( p_name  => 'chunk_inserted_callback_fn'
-            , p_value => l_chunk_inserted_callback_fn
-            );          
-    end if;
-
-    if l_error_callback_fn is not null then
-      apex_json.write_raw
-            ( p_name  => 'error_callback_fn'
-            , p_value => l_error_callback_fn
-            );
-    end if;
-
-    apex_json.close_object;
-*/
     apex_json.close_object;
 
     l_result.javascript_function := 'function(){plogger.start(this, '|| apex_json.get_clob_output || ', '|| l_init_js_fn ||');}';
@@ -116,7 +63,8 @@ end render;
 
 --------------------------------------------------------------------------------
 -- the ajax function is invoked from the plogger.js, passing 
--- apex_application.g_clob_01 : events as json string
+-- apex_application.g_clob_01 : events, errors, XHR as json string
+-- inserts into plogger table
 
 --------------------------------------------------------------------------------
 function ajax
@@ -131,11 +79,6 @@ is
     -- return type which is necessary for the plugin infrastructure
     l_return           apex_plugin.t_dynamic_action_ajax_result;
     
-/*    -- read plugin parameters and store in local variables
-    l_insertType        p_dynamic_action.attribute_08%type := p_dynamic_action.attribute_08;
-    l_plsql_statement   p_dynamic_action.attribute_09%type := p_dynamic_action.attribute_09; 
-    
-*/
     l_json clob;
     l_xml clob;
     l_sql varchar2(32767);
@@ -146,7 +89,6 @@ is
     l_service_path varchar2(4000);
 
 begin
-    -- standard debugging intro, but only if necessary
   if apex_application.g_debug
   then
       apex_plugin_util.debug_dynamic_action
@@ -155,7 +97,9 @@ begin
         );
   end if;
     
-
+  --return ords service url and plogger_config params to main thread
+  -- ords service url and config params are passed to worker thread 
+  -- worker thread uses url to persist log in plogger table using XHR
   if l_request_type = 'config' then
     apex_json.initialize_output;
     apex_json.open_object;
