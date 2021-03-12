@@ -16,8 +16,7 @@
 </p>    
 
 
-# Getting Started
-## Installation
+# Installation
 <p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> 
 <ul>
 <li>Execute ploggerTable.sql in APEX parsing schema. 
@@ -30,7 +29,7 @@
 </p>
 <p>On page 0, create dynamic action on page load event and select plogger plugin in true action</p>
 
-## Changing default configuration
+# Changing default configuration
 <p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
 <p>To override default configuration, update configuration parameters in plogger_config table
 </p>
