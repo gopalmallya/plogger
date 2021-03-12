@@ -103,7 +103,7 @@ begin
          insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'mask','disabled','When set to enabled, plogger will redact page items set in mask_page_items parameter. When set to disabled, plogger will redaction will be skipped. Value is required');
          insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'mask_page_items',null,'Set page item names to redact item values with *** in event and xhr logs. When set to null, page item values will not be redacted in event and xhr logs');
          insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'retention_days','7','Set number of days you want to retain data in plogger table');
-         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'sync_interval_in_seconds','10','When set to 0, event is immediately synced in plogger table. Set number of seconds you want plogger to sync the logs collected on client side to plogger table. This value must be less than minimum seconds you expect a user will spend on the page');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'sync_interval_in_seconds','0','When set to 0, event is immediately synced in plogger table. Set number of seconds you want plogger to sync the logs collected on client side to plogger table. This value must be less than minimum seconds you expect a user will spend on the page');
 
          commit;
       end if;
