@@ -5,9 +5,9 @@
 
   <testsuite name="plogger"
     errors="0" failures="0" hostname="" id="" package="plogger" skipped="0"
-    tests="1" time="30.35" timestamp="">
+    tests="1" time="36.36" timestamp="">
   
-    <testcase name="Demo test plogger" classname="plogger" time="30.35" assertions="2">
+    <testcase name="Demo test plogger" classname="plogger" time="36.36" assertions="2">
 
     
 

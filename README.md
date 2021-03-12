@@ -1,9 +1,9 @@
-# About this plugin
+<h1> About this plugin</h1>
 <p>plogger is Oracle APEX, dynamic action plugin, when configured on page load event, captures user interaction events, errors and xhr in realtime and logs them in plogger table.<p>
 <p>APEX developers can use this plugin to understand the "how users are using the page and application" by analyzing captured events and data, fix page errors thrown by browser and tune performance by optimizing server side processing by analyzing xhr </p>
 <p>plogger can be configured to capture events, errors and xhr on all pages or selected pages, for selected users, redact sensitive data, cleanup older logs by setting configuration values in plogger_config table</p>
 
-# Demo
+<h1> Demo </h1>
 <p> plogger plugin is added to customer tracker application, on page Zero, as dynamic action, on page load event., thereby enabling capture of events, errors and xhr on all pages of application. </p>
 <p> Explore the <a href="https://gopalmallya.com/ords/r/gopalmallya/plogger_demo">demo application</a>, by clicking drop downs, editing, saving pages in customer tracker application.</p>
 <p> Analyze you exploration, in plogger reports, which contains 
@@ -16,21 +16,18 @@
 </p>    
 
 
-# Installation
-<p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> 
+<h1>Installation</h1>
+<p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> </p>
+<p>
 <ul>
 <li>Execute ploggerTable.sql in APEX parsing schema. 
-    
-> This script will create plogger table with daily interval partition 
->
->  plogger_config table with default configuration values and scheduler job for cleanup older logs </li>
+    This script will create plogger table with daily interval partition,plogger_config table with default configuration values and scheduler job for cleanup older logs </li>
 <li> Import dynamic_action_plugin_com_gm_plogger.sql in APEX builder.</li>
 <li>On page 0, create dynamic action on page load event and select plogger plugin in true action</li>
 </ui>
 </p>
 
-
-# Changing default configuration
+<h1>Changing default configuration</h1>
 <p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
 <p>To override default configuration, update configuration parameters in plogger_config table
 </p>
