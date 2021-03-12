@@ -87,6 +87,7 @@ is
     l_insertRowCount   pls_integer;
     l_request_type varchar2(255) := apex_application.g_x01;
     l_service_path varchar2(4000);
+    l_created_date date := sysdate;
 
 begin
   if apex_application.g_debug
@@ -133,7 +134,7 @@ begin
                    event_Time_Stamp, event_Target_HTML, event_Target_ID, event_Target_Class,
                    event_Target_Text, Element, Current_value, 
                    xhr_data, xhr_url, xhr_ready_state, xhr_status, xhr_response_text,
-                   error_message, error_url, error_stack
+                   error_message, error_url, error_stack, created_date
 
             )
             with x as ( select :l_xml as xml_text from dual)
@@ -141,7 +142,7 @@ begin
                    event_Time_Stamp, event_Target_HTML, event_Target_ID, event_Target_Class,
                    event_Target_Text, Element, Current_value, 
                    xhr_data, xhr_url, xhr_ready_state, xhr_status, xhr_response_text,
-                   error_message, error_url, error_stack
+                   error_message, error_url, error_stack,:l_created_date
                    --xt.event_log.getClobVal()
                    --XMLSERIALIZE(CONTENT xt.event_log as clob INDENT SIZE = 2)
                    --x.xml_text
@@ -171,7 +172,7 @@ begin
                   error_url varchar2(255) path ''/row/eventLog/errorURL'',
                   error_stack clob path ''/row/eventLog/errorStack''
             )xt';
-  execute immediate l_sql using l_xml;          
+  execute immediate l_sql using l_xml, l_created_date;          
   l_insertRowCount := sql%rowcount;
   l_message := ' inserted '||l_insertRowCount||' log records: ' || ' *sid* '|| l_sid|| ' time: '|| to_char(sysdate, 'hh24:mi:ss');
   htp.p(l_message);

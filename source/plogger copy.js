@@ -118,7 +118,7 @@ var plogger = (function($) {
     //log form submit
     $('form').submit(function(event){
         // Stop the form submitting
-        //event.preventDefault();
+        event.preventDefault();
         eventLog = {
             eventTimeStamp: event.timeStamp.toString(),
             eventTargetHTML: undefined,
@@ -138,22 +138,17 @@ var plogger = (function($) {
             eventLog: eventLog
 
         }; 
-        /*if ( plogWorker ) {
+        if ( plogWorker ) {
             plogWorker.postMessage(JSON.stringify(logData));
             plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-          }*/
-        if (dbOpen) {
-            add(logData);
-            plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-        } 
-
+          }
         sleep(100); //this gives time for worker to persist submit event in indexeddb
-        //event.currentTarget.submit();
+        event.currentTarget.submit();
         
                        
         
     });  
-    
+
 
     //get ords service path, to be used by worker to insert logData
     async function geturl() {
@@ -276,21 +271,14 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker  ) {    
+            if ( plogWorker  ) {    
                 plogWorker.postMessage(JSON.stringify(logData));
                 //sync 
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
                     plogWorker.postMessage(JSON.stringify({"method":"sync"}));
                 }    
 
-            }*/
-            if (dbOpen) {
-                add(logData);
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                } 
-            } 
-
+            }
 
         }    
         if ( configEventLoggingEnabled && eventType == 'event' && configEventFilter && configEventFilter.indexOf(eventName) !== -1 )  {
@@ -314,19 +302,13 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker  ) {    
+            if ( plogWorker  ) {    
                 plogWorker.postMessage(JSON.stringify(logData));
                 //sync 
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
                     plogWorker.postMessage(JSON.stringify({"method":"sync"}));
                 }    
 
-            }*/
-            if (dbOpen) {
-                add(logData);
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                } 
             } 
 
         }    
@@ -347,21 +329,14 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker ) {    
+            if ( plogWorker ) {    
                 plogWorker.postMessage(JSON.stringify(logData));
                 //sync 
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
                     plogWorker.postMessage(JSON.stringify({"method":"sync"}));
                 }   
 
-            } */
-            if (dbOpen) {
-                add(logData);
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                } 
             } 
-
  
         }    
 
@@ -385,7 +360,7 @@ var plogger = (function($) {
 
         });
         plogWorker.postMessage(JSON.stringify({"method":"init"}));
-        openDB();
+
         
         
     }
@@ -443,7 +418,9 @@ var plogger = (function($) {
             transaction.oncomplete = function() {
               console.log("Transaction is complete");
               console.log("main add_indexeddb_success");
-
+              if ( plogWorker ) {
+                plogWorker.postMessage(JSON.stringify({"method":"sync"}));
+              }
             };
           };
       

@@ -70,12 +70,13 @@ self.addEventListener("message", (event) => {
       db = req.result;
       dbOpen = true;
       self.postMessage('db_open_success');
+      
     };
     req.onerror = function(e) {
       self.postMessage("db_open_error");
     };
   }
-
+  //not used
   if ( eventDataObj.method == 'sync' ) {
     sync();
     
@@ -112,6 +113,7 @@ self.addEventListener("message", (event) => {
       //store event in indexeddb
       add(eventDataObj);
 
+
   }
   
   if ( eventDataObj.hasOwnProperty('type') &&  eventDataObj.type == 'xhr' ){
@@ -129,7 +131,7 @@ self.addEventListener("message", (event) => {
     add(eventDataObj);
   }
 
-  sync();
+  //sync();
 
 });
 
@@ -216,7 +218,7 @@ function getConfigParams() {
 
 //redact
 function mask(key,value) {
-  return value;
+  
   var maskedValue;
   if ( configMaskEnabled && maskPageItems && maskPageItems.indexOf(key.toLowerCase()) !== -1) {
      maskedValue = value.replace(/./g,"*");
@@ -255,6 +257,12 @@ function readAll() {
       cursor.continue();
     } else {
       self.postMessage("read_indexeddb_completed");
+      if ( typeof xhrURL !== "undefined" && xhrURL.length > 0 && insertScheduledCount === 0 && logArray.length > 0 ) {   
+        insertScheduledCount++; 
+        let logData = JSON.stringify(logArray);
+        ajaxOptions.data.p_clob_01 = logData;
+        setTimeout(insert(ajaxOptions.data),100); 
+      } 
     }
   };
 }
@@ -292,15 +300,8 @@ function add(eventDataObj) {
 function sync(){
   if ( db ) {
     readAll();
-    
   }  
-  if ( typeof xhrURL !== "undefined" && xhrURL.length > 0 && insertScheduledCount === 0 && logArray.length > 0 ) {   
-    insertScheduledCount++; 
-    let logData = JSON.stringify(logArray);
-    ajaxOptions.data.p_clob_01 = logData;
-    setTimeout(insert(ajaxOptions.data),100); 
-  } 
-  
+ 
 }
 
 //XHR data in APEX is form url encoded, this function converts it into JSON 
