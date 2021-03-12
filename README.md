@@ -15,6 +15,11 @@
     </ul>
 </p>    
 
+<h1>Testing & Supported Versions</h1>
+<p> This plugin is tested on firefox 86.0/ chrome 89.0 / Oracle DB 11.2.0.2 and 19.0 / Apex 5.1.4 and 20.2 <p>
+<p> The plugin uses indexeddb for local storage, all modern browsers with latest versions support indexeddb. </p>
+<p> This plugin uses daily interval range partition for store logs. </p>
+
 
 <h1>Installation</h1>
 <p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> </p>

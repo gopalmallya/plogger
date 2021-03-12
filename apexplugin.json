@@ -1,0 +1,34 @@
+{
+  "name" : "plogger",
+  "version" : "1.0",
+  "description" : "Capture events, errors and xhr by using plogger dynamic action plugin",
+  "keywords" : ["event logging", "error logging", "logger", "user analytics"],
+  "homepage" : "https://github.com/gopalmallya/plogger",
+  "bugs" : {
+    "url" : "https://github.com/gopalmallya/plogger/issues",
+    "email" : "gopalmallya73@gmail.com"
+  },
+  "license" : "MIT",
+  "commercial" : "No",
+  "author" : {
+    "name" : "Gopal Mallya",
+    "email" : "gopalmallya73@gmail.com",
+    "url" : "https://github.com/gopalmallya"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/gopalmallya/plogger.git"
+  },
+ "oracle" : {
+    "versions" : ["11.2.0.1", "12.1.0.1", "12.2.0.1", "18.4.0.0", "19.0.0.0.0"],
+    "apex" : {
+      "versions" : ["5.1.4", "18.1.0.00.45", "18.2.0.00.12", "19.1.0.00.15", "19.2.0.00.18", "20.1.0.00.13", "20.2.0.00.20"],
+      "plugin" : {
+        "internalName" : "COM.GM.PLOGGER",
+        "type" : "dynamic action",
+        "demo" : "https://gopalmallya.com/ords/r/gopalmallya/plogger_demo",
+        "previewImage" : "https://github.com/gopalmallya/plogger/raw/main/preview.PNG"
+      }
+    }
+  }
+}
