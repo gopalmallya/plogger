@@ -1,5 +1,5 @@
 # About this plugin
-<p>plogger is a dynamic action plugin, when configured on page load event, captures user interaction events, errors and xhr in realtime and logs them in plogger table.<p>
+<p>plogger is Oracle APEX, dynamic action plugin, when configured on page load event, captures user interaction events, errors and xhr in realtime and logs them in plogger table.<p>
 <p>APEX developers can use this plugin to understand the "how users are using the page and application" by analyzing captured events and data, fix page errors thrown by browser and tune performance by optimizing server side processing by analyzing xhr </p>
 <p>plogger can be configured to capture events, errors and xhr on all pages or selected pages, for selected users, redact sensitive data, cleanup older logs by setting configuration values in plogger_config table</p>
 
@@ -19,7 +19,8 @@
 
 <p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> </p>
 <p>On page 0, create dynamic action on page load event and select plogger plugin in true action</p>
-<p>update configuration parameters in plogger_config table to 
+<p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
+<p>To override default configuration, update configuration parameters in plogger_config table to 
 <ul>
 <li> enable or disable logging events, errors and xhr </li>
 <li> enable or disable logging events </li>
@@ -39,7 +40,7 @@
 # Features
 <p>
 <ul>
-<li>For Security and Privacy, this plugin is written in plain javascript and PL/SQL , with no dependency on any external libraries like google analytics</li>
+<li>For Security and Privacy, this plugin is written in plain javascript using indexedDB to persist logs and PL/SQL to insert into plogger table. The plugin has no dependencies on any external javascript libraries or user analytic librarires for e.g google analytics</li>
 <li>Capture and log, events</li>
 <li>Capture and log, errors</li>
 <li>Capture and log, xml http requests (xhr)</li>
@@ -50,3 +51,44 @@
 <li>Automatic cleanup of older logs</li>
 </ul>
 </p>
+
+# How to use collected logs
+<p><pre><code>Select * from plogger </code></pre></p>
+<p> Table Description </p>
+<table aria-label="Results" cellpadding="0" cellspacing="0" border="0" class="u-Report u-Report--stretch">
+<tbody><tr><th id="TABLE_NAME">TABLE_NAME</th><th id="COLUMN_NAME">COLUMN_NAME</th><th id="COMMENTS">COMMENTS</th></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">APP_ID</td><td headers="COMMENTS">Application ID</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">PAGE_ID</td><td headers="COMMENTS">Page ID</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">SESSION_ID</td><td headers="COMMENTS">Session ID</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_ID</td><td headers="COMMENTS">ISO timestamp when event, error, xhr was captured</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TYPE</td><td headers="COMMENTS">Contains event for user interaction events, error for browser error and xhr for xml http request made to server</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_NAME</td><td headers="COMMENTS">Name of event such as click, change. For errors it is error and xhr it is xhr</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TIME_STAMP</td><td headers="COMMENTS">Internal Identifier of event, used to suppress duplicate events by plogger</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TARGET_HTML</td><td headers="COMMENTS">HTML of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TARGET_ID</td><td headers="COMMENTS">ID of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TARGET_CLASS</td><td headers="COMMENTS">Class of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">EVENT_TARGET_TEXT</td><td headers="COMMENTS">Value of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">ELEMENT</td><td headers="COMMENTS">Element of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">CURRENT_VALUE</td><td headers="COMMENTS">Current Value of target which originated the event. For error and xhr it will be null.</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">XHR_DATA</td><td headers="COMMENTS">xhr payload sent to server</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">XHR_URL</td><td headers="COMMENTS">xhr url, used to send the xhr request</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">XHR_READY_STATE</td><td headers="COMMENTS">xhr ready states</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">XHR_STATUS</td><td headers="COMMENTS">xhr status</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">XHR_RESPONSE_TEXT</td><td headers="COMMENTS">xhr response text</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">ERROR_MESSAGE</td><td headers="COMMENTS">Error message thrown by browser</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">ERROR_URL</td><td headers="COMMENTS">Error URL</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">ERROR_STACK</td><td headers="COMMENTS">Error Stack</td></tr>
+<tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">CREATED_DATE</td><td headers="COMMENTS">Date when log was created. The table is interval day partitioned using created_date column as partition key</td></tr>
+</tbody></table>
+
+# How doe it work
+<p> In page main thread, events, errors and xhr are intercepted by overriding respective interfaces to persist in indexeddb </p>
+<p> Main thread captures and persists events, errors and xhr, using the configuration parameters, on every page load. This enables on demand capturing and logging </p>
+<p>Main thread, spawns worker thread to sync the persisted message to plogger table</p>
+<p> Worker thread persist the captured events, errors and logs in realtime or after seconds configured in plogger_config table </p>
+<p>Worker thread also performs data redaction</p> 
+
+# Known Issues
+<p>Events which causes page navigation for e.g may not be captured if page gets refreshed before logs are persisted in indexeddb. </p>
+<p> When sync interval is set to value other than zero ( not realtime logging), logs may not get inserted into plogger table , when user closes the browser before logs are synced </p>
+

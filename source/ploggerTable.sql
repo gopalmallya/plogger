@@ -112,6 +112,33 @@ exception
 end;
 /
 
+begin
+execute immediate 'comment on column  plogger.app_id is ''Application ID'' ';
+execute immediate 'comment on column  plogger.page_id is ''Page ID'' ';
+execute immediate 'comment on column  plogger.session_id is ''Session ID'' ';
+execute immediate 'comment on column  plogger.event_id is ''ISO timestamp when event, error, xhr was captured'' ';
+execute immediate 'comment on column  plogger.event_type is ''Contains event for user interaction events, error for browser error and xhr for xml http request made to server'' ';
+execute immediate 'comment on column  plogger.event_name is ''Name of event such as click, change. For errors it is error and xhr it is xhr'' ';
+execute immediate 'comment on column  plogger.event_Time_Stamp is ''Internal Identifier of event, used to suppress duplicate events by plogger'' ';
+execute immediate 'comment on column  plogger.event_Target_HTML is ''HTML of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.event_Target_ID is ''ID of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.event_Target_Class is ''Class of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.event_Target_Text is ''Value of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.Element is ''Element of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.Current_value is ''Current Value of target which originated the event. For error and xhr it will be null.'' ';
+execute immediate 'comment on column  plogger.xhr_data is ''xhr payload sent to server'' ';
+execute immediate 'comment on column  plogger.xhr_url is ''xhr url, used to send the xhr request'' ';
+execute immediate 'comment on column  plogger.xhr_ready_state is ''xhr ready states'' ';
+execute immediate 'comment on column  plogger.xhr_status is ''xhr status'' ';
+execute immediate 'comment on column  plogger.xhr_response_text is ''xhr response text'' ';
+execute immediate 'comment on column  plogger.error_message is ''Error message thrown by browser'' ';
+execute immediate 'comment on column  plogger.error_url is ''Error URL'' ';
+execute immediate 'comment on column  plogger.error_stack is ''Error Stack'' ';
+execute immediate 'comment on column  plogger.created_date is ''Date when log was created. The table is interval day partitioned using created_date column as partition key'' ';
+end;
+/
+
+
 --script to drop partition older than retention_daya config parameter set in plogger_config table
 --please schedule this script using dbms_scheduler to run daily.
 create or replace procedure plogger_cleanup

@@ -138,10 +138,7 @@ var plogger = (function($) {
             eventLog: eventLog
 
         }; 
-        /*if ( plogWorker ) {
-            plogWorker.postMessage(JSON.stringify(logData));
-            plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-          }*/
+
         if (dbOpen) {
             add(logData);
             plogWorker.postMessage(JSON.stringify({"method":"sync"}));
@@ -276,14 +273,6 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker  ) {    
-                plogWorker.postMessage(JSON.stringify(logData));
-                //sync 
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                }    
-
-            }*/
             if (dbOpen) {
                 add(logData);
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
@@ -314,14 +303,6 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker  ) {    
-                plogWorker.postMessage(JSON.stringify(logData));
-                //sync 
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                }    
-
-            }*/
             if (dbOpen) {
                 add(logData);
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
@@ -347,14 +328,6 @@ var plogger = (function($) {
     
             }; 
     
-            /*if ( plogWorker ) {    
-                plogWorker.postMessage(JSON.stringify(logData));
-                //sync 
-                if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
-                    plogWorker.postMessage(JSON.stringify({"method":"sync"}));
-                }   
-
-            } */
             if (dbOpen) {
                 add(logData);
                 if ( configSyncInterval && !isNaN(configSyncInterval) && configSyncInterval == 0 ){
@@ -378,7 +351,7 @@ var plogger = (function($) {
         var xhr_url = geturl();
         plogWorker = new Worker(plugin_prefix+"plogWorker.js");
         plogWorker.addEventListener("message", (event) => {
-            console.table('worker response ', JSON.stringify(event.data));
+            //console.table('worker response ', JSON.stringify(event.data));
             if ( event.data == 'db_open_success' ) {
                 dbOpen = true;
             }
