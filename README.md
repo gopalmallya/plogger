@@ -15,27 +15,45 @@
     </ul>
 </p>    
 
-# Getting Started
 
-<p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> </p>
-<p>On page 0, create dynamic action on page load event and select plogger plugin in true action</p>
-<p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
-<p>To override default configuration, update configuration parameters in plogger_config table to 
+# Getting Started
+## Installation
+<p>Download and Install the plugin from <a href="https://github.com/gopalmallya/plogger">GitHub</a> 
 <ul>
-<li> enable or disable logging events, errors and xhr </li>
-<li> enable or disable logging events </li>
-<li> enable or disable logging errors </li>
-<li> enable or disable logging xhr </li>
-<li> enable or disable data redaction for sensitive data </li>
-<li> page items to be redacted from logs </li>
-<li> page filter to log selective pages </li>
-<li> event filter to log selective events </li>
-<li> user filter to log for selective users </li>
-<li> Interval in seconds to sync the captured events, errors and xhr to plogger table </li>
-<li> retention days to clean-up logs older than retention data </li>
-</ul>
+<li>Execute ploggerTable.sql in APEX parsing schema. 
+    
+> This script will create plogger table with daily interval partition 
+>
+>  plogger_config table with default configuration values and scheduler job for cleanup older logs </li>
+<li> Import dynamic_action_plugin_com_gm_plogger.sql in APEX builder.</li>
+</ui>
+</p>
+<p>On page 0, create dynamic action on page load event and select plogger plugin in true action</p>
+
+## Changing default configuration
+<p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
+<p>To override default configuration, update configuration parameters in plogger_config table
+</p>
+<p> The table below is plogger configuration for application 107.</p> 
+<table aria-label="Results" cellpadding="0" cellspacing="0" border="0" class="u-Report u-Report--stretch">
+<tbody><tr><th id="APP_ID">APP_ID</th><th id="CONFIG_NAME">CONFIG_NAME</th><th id="CONFIG_VALUE">CONFIG_VALUE</th><th id="CONFIG_DESC">CONFIG_DESC</th></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">page_logging</td><td headers="CONFIG_VALUE">enabled</td><td headers="CONFIG_DESC">When set to enabled, plogger will log events, error and xhr. When set to disabled, plogger will stop logging. Value is required</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">event_logging</td><td headers="CONFIG_VALUE">enabled</td><td headers="CONFIG_DESC">When set to enabled, plogger will log events. When set to disabled, plogger will stop logging events. Value is required</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">xhr_logging</td><td headers="CONFIG_VALUE">enabled</td><td headers="CONFIG_DESC">When set to enabled, plogger will log xhr. When set to disabled, plogger will stop logging xhr. Value is required</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">error_logging</td><td headers="CONFIG_VALUE">enabled</td><td headers="CONFIG_DESC">When set to enabled, plogger will log errors. When set to disabled, plogger will stop logging error. Value is required</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">event_filter</td><td headers="CONFIG_VALUE">click,change,blur,submit</td><td headers="CONFIG_DESC">When set to null, all events will be logged. Set events separated by comma or colon to log filtered events</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">page_filter</td><td headers="CONFIG_VALUE"> - </td><td headers="CONFIG_DESC">When set to null, all pages will be logged. Set page numbers separated by comma or colon to log filtered pages.</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">username_filter</td><td headers="CONFIG_VALUE"> - </td><td headers="CONFIG_DESC">When set to null, all users will be logged. Set username separated by comma or colon to log filtered users.</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">mask</td><td headers="CONFIG_VALUE">disabled</td><td headers="CONFIG_DESC">When set to enabled, plogger will redact page items set in mask_page_items parameter. When set to disabled, plogger will redaction will be skipped. Value is required</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">mask_page_items</td><td headers="CONFIG_VALUE"> - </td><td headers="CONFIG_DESC">Set page item names to redact item values with *** in event and xhr logs. When set to null, page item values will not be redacted in event and xhr logs</td></tr>
+<tr><td headers="APP_ID">107</td><td headers="CONFIG_NAME">retention_days</td><td headers="CONFIG_VALUE">7</td><td headers="CONFIG_DESC">Set number of days you want to retain data in plogger table</td></tr>
+<tr><td colspan="4">More than 10 rows available. Increase rows selector to view more rows.</td></tr>
+</tbody></table>
+<p> for e.g. to disable error logging</p>
+<pre><code>update plogger_config set config_value='disabled' where config_name='error_logging'</code></pre>
 <p> Analyse captured events, errors and xhr in plogger table</p>
 </p>
+
 
 # Features
 <p>
@@ -81,12 +99,11 @@
 <tr><td headers="TABLE_NAME">PLOGGER</td><td headers="COLUMN_NAME">CREATED_DATE</td><td headers="COMMENTS">Date when log was created. The table is interval day partitioned using created_date column as partition key</td></tr>
 </tbody></table>
 
-# How doe it work
-<p> In page main thread, events, errors and xhr are intercepted by overriding respective interfaces to persist in indexeddb </p>
+# How does plugin capture events, errors and xhr
+<p> In page main thread, events, errors and xhr are intercepted by overriding respective interfaces to persist in indexeddb. The interception overhead is minimal as indexeddb persistence is asynchronous and fast.  </p>
 <p> Main thread captures and persists events, errors and xhr, using the configuration parameters, on every page load. This enables on demand capturing and logging </p>
-<p>Main thread, spawns worker thread to sync the persisted message to plogger table</p>
-<p> Worker thread persist the captured events, errors and logs in realtime or after seconds configured in plogger_config table </p>
-<p>Worker thread also performs data redaction</p> 
+<p>Main thread, spawns worker thread to offload data redaction, log formatting and syncing to plogger table, 
+
 
 # Known Issues
 <p>Events which causes page navigation for e.g may not be captured if page gets refreshed before logs are persisted in indexeddb. </p>

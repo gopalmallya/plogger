@@ -83,28 +83,31 @@ begin
       select count(1) into l_cnt from all_objects where object_name = l_table_name and object_type='TABLE';
       if l_cnt > 0 then
          execute immediate 'drop table '|| l_table_name;
+         dbms_output.put_line(l_table_name|| ' dropped.');
       end if;
       select count(1) into l_cnt from all_objects where object_name = l_table_name and object_type='TABLE';
       if l_cnt = 0 then
          execute immediate l_create_table_sql;
+          dbms_output.put_line(l_table_name|| ' created.');
       end if;
      select count(1) into l_cnt from all_objects where object_name = l_table_name and object_type='TABLE';
       if l_cnt > 0 then
          delete from plogger_config;
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'page_logging','enabled','When set to enabled, plogger will log events, error and xhr. When set to disabled, plogger will stop logging. Value is required');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'event_logging','enabled','When set to enabled, plogger will log events. When set to disabled, plogger will stop logging events. Value is required');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'xhr_logging','enabled','When set to enabled, plogger will log xhr. When set to disabled, plogger will stop logging xhr. Value is required');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'error_logging','enabled','When set to enabled, plogger will log errors. When set to disabled, plogger will stop logging error. Value is required');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'event_filter','click,change,blur,submit','When set to null, all events will be logged. Set events separated by comma or colon to log filtered events');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'page_filter',null,'When set to null, all pages will be logged. Set page numbers separated by comma or colon to log filtered pages.');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'username_filter',null,'When set to null, all users will be logged. Set username separated by comma or colon to log filtered users.');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'mask','disabled','When set to enabled, plogger will redact page items set in mask_page_items parameter. When set to disabled, plogger will redaction will be skipped. Value is required');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'mask_page_items',null,'Set page item names to redact item values with *** in event and xhr logs. When set to null, page item values will not be redacted in event and xhr logs');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'retention_days','7','Set number of days you want to retain data in plogger table');
-         insert into plogger_config (app_id,config_name , config_value, config_desc ) values (107,'sync_interval_in_seconds','10','When set to 0, event is immediately synced in plogger table. Set number of seconds you want plogger to sync the logs collected on client side to plogger table. This value must be less than minimum seconds you expect a user will spend on the page');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'page_logging','enabled','When set to enabled, plogger will log events, error and xhr. When set to disabled, plogger will stop logging. Value is required');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'event_logging','enabled','When set to enabled, plogger will log events. When set to disabled, plogger will stop logging events. Value is required');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'xhr_logging','enabled','When set to enabled, plogger will log xhr. When set to disabled, plogger will stop logging xhr. Value is required');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'error_logging','enabled','When set to enabled, plogger will log errors. When set to disabled, plogger will stop logging error. Value is required');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'event_filter','click,change,blur,submit','When set to null, all events will be logged. Set events separated by comma or colon to log filtered events');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'page_filter',null,'When set to null, all pages will be logged. Set page numbers separated by comma or colon to log filtered pages.');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'username_filter',null,'When set to null, all users will be logged. Set username separated by comma or colon to log filtered users.');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'mask','disabled','When set to enabled, plogger will redact page items set in mask_page_items parameter. When set to disabled, plogger will redaction will be skipped. Value is required');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'mask_page_items',null,'Set page item names to redact item values with *** in event and xhr logs. When set to null, page item values will not be redacted in event and xhr logs');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'retention_days','7','Set number of days you want to retain data in plogger table');
+         insert into plogger_config (app_id,config_name,config_value,config_desc ) values (107,'sync_interval_in_seconds','10','When set to 0, event is immediately synced in plogger table. Set number of seconds you want plogger to sync the logs collected on client side to plogger table. This value must be less than minimum seconds you expect a user will spend on the page');
 
          commit;
       end if;
+
 exception
  when others then
     dbms_output.put_line(l_table_name ||' creation failed ');
@@ -204,9 +207,15 @@ begin
 end;
 /
 
+
+
 BEGIN
+  for rec in ( select JOB_NAME from all_scheduler_jobs where job_name ='PLOGGER_CLEANUP') 
+  loop
+      execute immediate ' begin dbms_scheduler.drop_job(job_name=>''PLOGGER_CLEANUP''); end;';
+  end loop;
   DBMS_SCHEDULER.create_job (
-    job_name        => 'plogger_cleanup',
+    job_name        => 'PLOGGER_CLEANUP',
     job_type        => 'PLSQL_BLOCK',
     job_action      => 'BEGIN plogger_cleanup; END;',
     start_date      => SYSTIMESTAMP,

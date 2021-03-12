@@ -99,7 +99,7 @@ var plogger = (function($) {
             sleep(10);
             return result;
             } catch(e) {
-                console.log('error running old listener');
+                //console.log('plogger error running old listener');
             }
         }
     
@@ -162,7 +162,7 @@ var plogger = (function($) {
             var getServicePathResult = getServicePathPromise.done ( function (d) {
                     let data = JSON.parse(d);
                     if (data.status == "success" ) {
-                        console.log('url is ',data.url);
+                        //console.log('url is ',data.url);
                         let service_path = data.url.replace(/\r?\n|\r/g,''); 
                         l_url = window.location.protocol+'//'+window.location.hostname+':'+window.location.port+service_path+'wwv_flow.ajax';
                         l_username = data.appUser;
@@ -216,7 +216,7 @@ var plogger = (function($) {
                   
             );
         } catch(e) {
-            console.log('url fetch error');
+            //console.log('url fetch error');
         }     
     
         let result = await getServicePathPromise;
@@ -351,7 +351,6 @@ var plogger = (function($) {
         var xhr_url = geturl();
         plogWorker = new Worker(plugin_prefix+"plogWorker.js");
         plogWorker.addEventListener("message", (event) => {
-            //console.table('worker response ', JSON.stringify(event.data));
             if ( event.data == 'db_open_success' ) {
                 dbOpen = true;
             }
@@ -380,17 +379,17 @@ var plogger = (function($) {
           }
           db.onerror = function(event) {
             let request = event.target; // the request that caused the error
-            console.log("DB Error", request.error);
+            //console.log("DB Error", request.error);
           };
-          console.log("main db_upgrade_success");
+          //console.log("main db_upgrade_success");
         };
         req.onsuccess = function(e) {
           db = req.result;
           dbOpen = true;
-          console.log('main db_open_success');
+          //console.log('main db_open_success');
         };
         req.onerror = function(e) {
-          console.log("dbmain _open_error");
+          //console.log("dbmain _open_error");
         };
     }
 
@@ -407,15 +406,15 @@ var plogger = (function($) {
             request.onsuccess = function(event) {
               var countRequest = transaction.objectStore("log").count();
               countRequest.onsuccess = function() {
-              console.log("main indexeddb count:" + countRequest.result);
+              //console.log("main indexeddb count:" + countRequest.result);
             };
             request.onerror = function(event) {
-              console.log("main add_indexeddb_error");
+              //console.log("main add_indexeddb_error");
             };
         
             transaction.oncomplete = function() {
-              console.log("Transaction is complete");
-              console.log("main add_indexeddb_success");
+              //console.log("Transaction is complete");
+              //console.log("main add_indexeddb_success");
 
             };
           };

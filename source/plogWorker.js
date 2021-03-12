@@ -285,7 +285,7 @@ function add(eventDataObj) {
       };
   
       transaction.oncomplete = function() {
-        console.log("Transaction is complete");
+        //console.log("Transaction is complete");
         self.postMessage("add_indexeddb_success");
 
       };
@@ -320,7 +320,7 @@ function uriEncodedToJSON(uriEncodedStr) {
     }
     
   } catch (e) {
-    console.log('error converting form encoded uri to json');
+    //console.log('error converting form encoded uri to json');
     self.postMessage("uri_json_error");
     return uriEncodedStr;
   }     
