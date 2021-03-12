@@ -25,9 +25,10 @@
 >
 >  plogger_config table with default configuration values and scheduler job for cleanup older logs </li>
 <li> Import dynamic_action_plugin_com_gm_plogger.sql in APEX builder.</li>
+<li>On page 0, create dynamic action on page load event and select plogger plugin in true action</li>
 </ui>
 </p>
-<p>On page 0, create dynamic action on page load event and select plogger plugin in true action</p>
+
 
 # Changing default configuration
 <p> Installing plugin, configures plogger to capture and log events, errors and xhr on all pages, for all users, in realtime, with no redaction on any page items and cleanup logs older than 7 days </p>
